@@ -98,7 +98,7 @@ nav {
     min-height: 100vh;
     background: linear-gradient(rgb(0, 0, 0, 0.5), rgb(0, 0, 0, 0.5)), url(../imagenes/ChatGPT\ Image\ 12\ dic\ 2025\,\ 02_00_02\ p.m..png);
     background-size: cover;
-    background-position: flex;
+    background-position: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -326,5 +326,18 @@ footer {
 
     .herramienta-grid p {
         font-size: small;
+    }
+}
+@media screen and (max-width: 400px) {
+    nav {
+        animation-timeline: scroll(root) move;
+    }
+    @keyframes move {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(0);
+        }
     }
 }
