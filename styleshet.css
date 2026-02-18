@@ -177,16 +177,17 @@ hr {
     font-size: 1.8rem;
 }
 .crd-1 p {
-    color: rgb(79, 79, 79);
+    color: rgb(0, 0, 0);
     font-size: 1.2rem;
 }
 .crd-1 li {
     margin: 0.5rem 0;
+    padding: auto;
 }
 .crd-1 img {
-    width: auto;
+    width: 100%;
     border-radius: 8px;
-    height: 350px;
+    height: 450px;
     margin-top: 1rem;
 }
 .crd-1:hover {
