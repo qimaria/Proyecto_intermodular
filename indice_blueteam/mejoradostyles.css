@@ -39,6 +39,9 @@ nav {
     border-radius: 8px;
     transition: all 0.3s ease;
 }
+.nav a {
+    font-family: "Anonymous Pro", monospace;
+}
 
 .nav:hover {
     background: rgba(0, 255, 255, 0.1);
@@ -52,12 +55,10 @@ nav {
     color: aliceblue;
     text-decoration: none;
     transition: all 0.3s ease;
-    text-shadow: 0 0 20px rgb(119, 0, 255);
 }
 
 .logo:hover {
     color: rgb(119, 0, 255);
-    text-shadow: 0 0 30px rgb(119, 0, 255);
     transform: scale(1.05);
 }
 
@@ -286,10 +287,7 @@ footer {
         font-size: 1rem;
     }
 
-    nav hr {
-        margin-bottom: 1rem;
-    }
-
+   
     .herramienta-card img {
         width: 100%;
         height: 45%;

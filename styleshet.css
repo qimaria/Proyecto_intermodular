@@ -140,6 +140,7 @@ hr {
 #carta {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    padding-bottom: 4rem ;
 }
  #carta_titulo {
     color: black;
@@ -177,20 +178,32 @@ hr {
 }
 .crd-1 p {
     color: rgb(79, 79, 79);
+    font-size: 1.2rem;
 }
 .crd-1 li {
     margin: 0.5rem 0;
 }
 .crd-1 img {
-    width: 100%;
+    width: auto;
     border-radius: 8px;
-    height: 500px;
+    height: 350px;
     margin-top: 1rem;
 }
 .crd-1:hover {
     transform: translateY(-5px);
     box-shadow: 12px 12px 16px rgba(0, 0, 0, 0.3);
 }
+footer {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 2rem;
+}
+
 @media screen and (max-width: 1200px) 
 {
     #introduccion_morado {

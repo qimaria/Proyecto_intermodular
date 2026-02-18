@@ -27,7 +27,6 @@ header {
     z-index: 1000;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 nav {
     display: flex;
     justify-content: space-between;
@@ -35,7 +34,6 @@ nav {
     max-width: 1200px;
     margin: 0 auto;
 }
-
 .nav {
     padding: 0.5rem 1rem;
     border-radius: 8px;
@@ -57,12 +55,10 @@ nav {
     color: rgb(0, 0, 0);
     text-decoration: none;
     transition: all 0.3s ease;
-    text-shadow: 0 0 20px rgb(119, 0, 255);
 }
 
 .logo:hover {
     color: rgb(119, 0, 255);
-    text-shadow: 0 0 30px rgb(119, 0, 255);
     transform: scale(1.05);
 }
 
