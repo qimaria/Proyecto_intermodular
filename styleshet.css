@@ -4,7 +4,9 @@
     box-sizing: border-box;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-
+hr {
+    margin: 1rem 0;
+}
 html {
     scroll-behavior: smooth;
 }
@@ -83,9 +85,6 @@ nav {
     height: 2px;
     background: linear-gradient(90deg, rgb(102, 0, 255), #7a5cff);
     transition: width 0.3s ease;
-}
-hr {
-    margin: 1rem 0;
 }
 
 .navegador a:hover::after {
@@ -204,15 +203,25 @@ footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 2rem;
 }
-
-@media screen and (max-width: 1200px) 
-{
-    #introduccion_morado {
-        grid-template-columns: 1fr;
+#introduccion_morado {
+        @media (width < 1200px)  {
+                grid-template-columns: 1fr;
+            }
+        justify-items: center;
+    }
+#carta {
+        @media (width < 1200px)  {
+                grid-template-columns: 1fr;
+            }
+        justify-items: center;
+    }
+@media screen and (max-width: 1500px) {
+    .introduccion {
+        align-items: center;
+        padding:2rem;
     }
     #introduccion_morado img {
         margin: 1rem 0 0 2rem;
-
     }
     .morado {
         margin: 1rem 2rem;
@@ -221,4 +230,47 @@ footer {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
+    hr {
+    margin: 1rem 0;
+    color: black;
+}
+}
+@media screen and (max-width: 800px) {
+      header {
+        position: relative;
+    }
+    nav {
+        flex-direction: column;
+        text-align: center;
+    }
+    .nav{
+        padding: 0;
+    }
+    .navegador {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    .introduccion {
+        font-size: 1.4rem;
+    }
+    #introduccion_morado img{
+        display: none;
+    }
+    .morado {
+        max-width: 20rem;
+    }
+    #carta_titulo {
+        font-size: 1.8rem;
+    }
+    .crd-1 img {
+        height: auto;
+    }
+    .crd-1 p, li{
+        font-size: 1rem;
+    }
+    footer {
+        font-size: 0.8rem;
+    }
+    
 }

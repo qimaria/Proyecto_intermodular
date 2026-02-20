@@ -137,3 +137,24 @@ div img {
     transform: scale(1.1);
     transition: transform 0.3s ease;
 }
+@media screen and (max-width: 820px) {
+    header {
+        position: relative;
+    }
+    nav {
+        flex-direction: column;
+        text-align: center;
+    }
+    .nav{
+        padding: 0;
+    }
+    .navegador {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    .contenido {
+        padding: 1rem;
+        margin-top: 10vh;
+    }
+}
