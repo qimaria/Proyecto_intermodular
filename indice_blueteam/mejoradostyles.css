@@ -51,6 +51,7 @@ nav{
     color: aliceblue;
     text-decoration: none;
     transition: all 0.3s ease;
+    padding: 2rem;
 }
 .logo:hover {
     color: rgb(119, 0, 255);
@@ -230,9 +231,17 @@ footer {
     grid-template-columns: 1fr;
     padding: 2rem;
     justify-items: center;
+    
   }
   .herramienta-card {
     min-height: 600px;
+  }
+  header a{
+    font-size: medium;
+  }
+  .logo {
+    font-size: 1.5rem;
+    padding: 1rem;
   }
 }
 

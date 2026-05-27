@@ -8,16 +8,11 @@
 </head>
 <body>
  
-<div class="scanline"></div>
- 
-<!-- HEADER -->
 <header>
-  <a href="#" class="logo">Ciber<span>wiki</span></a>
-  <nav>
-            <a href="indice2.html" class="logo">Ciberwiki</a>
-            <hr>
+  <a href="./index.html" class="logo">Ciber<span>wiki</span></a>
+          <nav>
             <ul class="navegador">
-                <li class="nav"><a href="../index.html">Inicio</a></li>
+                <li class="nav"><a href="index.html">Inicio</a></li>
                 <li class="nav"><a href="../indice_purpleteam/index.html">Purple Team</a></li>
                 <li class="nav"><a href="../indice_redteam/index.html">Red Team</a></li>
                 <li class="nav"><a href="../indice_blueteam/indice2.html">Blue Team</a></li>
@@ -25,224 +20,392 @@
             </ul>
         </nav>
 </header>
- 
-<!-- HERO -->
-<div class="hero">
-  <div class="badge">Purple Team · Módulo de colaboración</div>
-  <h1>
-    La fusión de<br>
-    <span class="red">Ataque</span> &amp; <span class="blue">Defensa</span><br>
-    <span class="purp">Purple Teaming</span>
-  </h1>
-  <p class="hero-desc">
-    El Purple Team integra las tácticas ofensivas del Red Team con las capacidades defensivas del Blue Team para crear un ciclo de retroalimentación continuo. La mejor defensa nace de entender el ataque.
-  </p>
-  <div class="fusion-bar">
-    <div class="seg r">⚔ Red Team</div>
-    <div class="seg plus">✦</div>
-    <div class="seg b">🛡 Blue Team</div>
-  </div>
-</div>
- 
-<!-- SECTION HEAD -->
-<div class="section-head">
-  <h2>// Matriz de análisis Purple Team</h2>
-</div>
- 
-<!-- TABLE -->
-<div class="table-wrap">
- 
-  <!-- Column headers -->
-  <div class="col-headers">
-    <div class="col-h attack"><span class="icon">⚔</span> Ataque</div>
-    <div class="col-h defense"><span class="icon">🛡</span> Defensa</div>
-    <div class="col-h consq"><span class="icon">⚠</span> Consecuencias</div>
-  </div>
- 
-  <div class="attack-block">
- 
-    <!-- ROW 1: SYN Flood / DoS -->
-    <div class="attack-row row-1">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> SYN Flood (DoS)</div>
-        <div class="attack-sub">CVE-2007-6750 · hping3 --flood</div>
-        <p>El atacante envía miles de paquetes TCP SYN por segundo sin completar el handshake, saturando la tabla de conexiones semiabiertas (SYN Backlog) del servidor y agotando sus recursos de red y CPU.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li>Activar <strong>SYN Cookies</strong> en el kernel (<code>net.ipv4.tcp_syncookies=1</code>) para evitar reserva de memoria por conexión incompleta.</li>
-          <li>Configurar <strong>UFW rate-limiting</strong> por IP para limitar conexiones simultáneas.</li>
-          <li>Ajustar <strong>timeouts TCP</strong> reduciendo <code>tcp_synack_retries</code> a 3.</li>
-          <li>Implementar <strong>fail2ban</strong> con jail para detectar ráfagas anómalas.</li>
-          <li>Filtrado de IPs con origen no válido mediante <strong>rp_filter=2</strong>.</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>El servidor queda sin recursos para atender peticiones legítimas. La terminal del administrador deja de responder, pudiendo requerir hasta 15 minutos por comando. La página web resulta inaccesible para todos los usuarios.</p>
-        <div class="tags">
-          <span class="tag high">Impacto alto</span>
-          <span class="tag high">Disponibilidad crítica</span>
-          <span class="tag med">Recuperación media</span>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ROW 2: Slowloris -->
-    <div class="attack-row row-2">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> Slowloris</div>
-        <div class="attack-sub">CVE-2007-6750 · HTTP parcial lento</div>
-        <p>El atacante abre múltiples conexiones HTTP al servidor y envía cabeceras de forma extremadamente lenta, manteniendo las conexiones abiertas indefinidamente y agotando el pool de conexiones disponibles del servidor web.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li>Configurar <strong>timeouts estrictos</strong> en Caddy: <code>read_header 10s</code>, <code>read_body 30s</code>, <code>write 30s</code>, <code>idle 1m</code>.</li>
-          <li>Limitar el <strong>tamaño máximo del cuerpo</strong> de petición a 1MB (<code>max_size 1MB</code>).</li>
-          <li>Bloquear <strong>métodos HTTP innecesarios</strong>; permitir solo GET y HEAD.</li>
-          <li>Usar <strong>UFW rate limit</strong> por conexiones entrantes al puerto 80/443.</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>El servidor web queda incapaz de atender nuevas conexiones. Los usuarios legítimos reciben errores de timeout. El servicio permanece degradado sin consumir prácticamente CPU, lo que dificulta la detección.</p>
-        <div class="tags">
-          <span class="tag high">Disponibilidad</span>
-          <span class="tag med">Detección difícil</span>
-          <span class="tag low">Bajo consumo CPU</span>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ROW 3: Fuerza Bruta SSH -->
-    <div class="attack-row row-3">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> Fuerza Bruta SSH</div>
-        <div class="attack-sub">Hydra · Ataque por diccionario</div>
-        <p>Herramientas como Hydra prueban de forma automática miles de combinaciones de usuario/contraseña contra el puerto SSH. Los bots escanean rangos de IPs buscando el puerto 22 abierto con autenticación por contraseña habilitada.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li>Deshabilitar completamente la <strong>autenticación por contraseña</strong> (<code>PasswordAuthentication no</code>).</li>
-          <li>Usar <strong>llaves de hardware</strong> (YubiKey ed25519-sk) con PIN + toque físico (4 factores).</li>
-          <li>Cambiar SSH a un <strong>puerto no estándar</strong> (ej. 46217) para evitar escaneos automatizados.</li>
-          <li>Limitar acceso a <strong>usuarios específicos</strong> (<code>AllowUsers alik</code>).</li>
-          <li><strong>Fail2ban</strong> bloquea IPs tras 3 intentos fallidos con espera de 30s.</li>
-          <li>Máximo <strong>3 intentos de autenticación</strong> por conexión (<code>MaxAuthTries 3</code>).</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>Sin defensa, el atacante puede ganar acceso root al servidor con los privilegios completos del sistema. Con las defensas implementadas (sin contraseñas + hardware key), el ataque resulta completamente inviable.</p>
-        <div class="tags">
-          <span class="tag high">Acceso root</span>
-          <span class="tag high">Compromiso total</span>
-          <span class="tag purple">Mitigado completamente</span>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ROW 4: Escaneo de puertos / Reconocimiento -->
-    <div class="attack-row row-4">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> Reconocimiento con Nmap</div>
-        <div class="attack-sub">OSINT · nmap -sV -A -O</div>
-        <p>El atacante utiliza Nmap para mapear la infraestructura de red: descubre máquinas activas, puertos abiertos, versiones de servicios y sistema operativo. Esta fase de reconocimiento precede a cualquier ataque real.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li><strong>UFW</strong> bloquea todo el tráfico entrante por defecto, filtrando 997 de 1000 puertos TCP.</li>
-          <li>Solo <strong>puertos necesarios</strong> están abiertos: SSH (no estándar), 80, 443, 53, 67/68.</li>
-          <li><strong>Puerto SSH no estándar</strong> (46217) dificulta la identificación automática del servicio.</li>
-          <li>El servidor NAT actúa como <strong>primera capa de aislamiento</strong>; los puertos del servidor son inaccesibles desde fuera de la red interna.</li>
-          <li>Nmap clasifica el SSH como "unknown" en el escaneo inicial por el puerto no estándar.</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>El escaneo revela la superficie de ataque disponible. Gracias al hardening, solo 3 puertos son visibles desde la red interna y el SSH no se identifica inmediatamente. La exposición exterior es prácticamente nula.</p>
-        <div class="tags">
-          <span class="tag low">Superficie mínima</span>
-          <span class="tag med">Info parcial al atacante</span>
-          <span class="tag purple">Bien mitigado</span>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ROW 5: DNS Cache Poisoning -->
-    <div class="attack-row row-5">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> DNS Cache Poisoning</div>
-        <div class="attack-sub">Ataque de envenenamiento DNS</div>
-        <p>El atacante inyecta registros DNS falsos en la caché del servidor DNS para redirigir el tráfico hacia IPs maliciosas. Los usuarios creen acceder al sitio legítimo mientras son dirigidos a un servidor controlado por el atacante.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li>Activar <strong>DNSSEC</strong> en BIND9 (<code>dnssec-validation auto</code>) para verificar firmas criptográficas de zonas DNS.</li>
-          <li>Usar <strong>TSIG (Transaction SIGnature)</strong> HMAC-SHA256 entre BIND9 y Kea DDNS para autenticar actualizaciones.</li>
-          <li>Restringir <strong>actualizaciones de zona</strong> únicamente a la clave TSIG autorizada (<code>allow-update { key "kea-ddns."; }</code>).</li>
-          <li>Limitar <strong>consultas recursivas</strong> solo a la red interna (<code>allow-recursion { localhost; 10.69.67.0/24; }</code>).</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>Sin protección, los usuarios son redirigidos silenciosamente a sitios falsos que capturan credenciales o instalan malware. Con DNSSEC + TSIG, cualquier respuesta no firmada o no autorizada es rechazada automáticamente.</p>
-        <div class="tags">
-          <span class="tag high">Phishing masivo</span>
-          <span class="tag high">Robo credenciales</span>
-          <span class="tag purple">Mitigado con DNSSEC</span>
-        </div>
-      </div>
-    </div>
- 
-    <!-- ROW 6: Escalada de privilegios -->
-    <div class="attack-row row-6">
-      <div class="cell attack-cell">
-        <div class="cell-label">⚔ Ataque</div>
-        <div class="attack-name"><span class="dot"></span> Escalada de Privilegios</div>
-        <div class="attack-sub">Privilege Escalation · Post-explotación</div>
-        <p>Una vez obtenido acceso con usuario limitado, el atacante intenta escalar privilegios hacia root mediante exploits de kernel, SUID mal configurados, sudo misconfiguration o servicios con privilegios excesivos.</p>
-      </div>
-      <div class="cell defense-cell">
-        <div class="cell-label">🛡 Defensa</div>
-        <ul class="def-list">
-          <li><strong>Root bloqueado</strong> para login directo (<code>PermitRootLogin no</code>); solo acceso vía sudo.</li>
-          <li>Usuario administrador <strong>"alik"</strong> con sudo limitado; no se trabaja habitualmente como root.</li>
-          <li><strong>AppArmor</strong> activo restringe qué procesos pueden acceder a qué archivos (observado en incidencias con Kea).</li>
-          <li>Docker ejecuta Caddy en un <strong>contenedor aislado</strong>, limitando el daño si Caddy es comprometido.</li>
-          <li><strong>Fail2ban + UFW</strong> dificultan que el atacante mantenga una sesión activa.</li>
-          <li>Permisos de archivos estrictos (<strong>chmod 600/700</strong>) en archivos críticos de configuración.</li>
-        </ul>
-      </div>
-      <div class="cell consq-cell">
-        <div class="cell-label">⚠ Consecuencias</div>
-        <p>Sin control de privilegios, un atacante con acceso a un usuario normal puede obtener control total del sistema en minutos. El modelo de mínimo privilegio + AppArmor + contenedores limita el radio de explosión de cualquier compromiso.</p>
-        <div class="tags">
-          <span class="tag high">Control total sistema</span>
-          <span class="tag med">Movimiento lateral</span>
-          <span class="tag purple">Contenido por AppArmor</span>
-        </div>
-      </div>
-    </div>
- 
-  </div><!-- /.attack-block -->
-</div><!-- /.table-wrap -->
- 
 
-<!-- FOOTER -->
-<footer>
-  <span>CiberWiki</span> · Purple Team · Proyecto Intermodular &nbsp;|&nbsp; Daniel Páramo · Albert Butsalan · Qi Zhou
-</footer>
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">Ciberwiki</a>
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Red Team</a></li>
+      <li><a href="#">Blue Team</a></li>
+      <li><a href="#" class="active">Purple Team</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">PURPLE TEAM — FRAMEWORK DE ANÁLISIS</div>
+    <h1>El Puente entre Ataque<br>y Defensa</h1>
+    <p>El Purple Team integra la perspectiva ofensiva del Red Team con la capacidad defensiva del Blue Team, cerrando el ciclo de retroalimentación de seguridad para construir organizaciones verdaderamente resilientes.</p>
+  </section>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-red"></div>Red Team · Ataque</div>
+    <div class="legend-item"><div class="legend-dot dot-blue"></div>Blue Team · Defensa</div>
+    <div class="legend-item"><div class="legend-dot dot-purp"></div>Purple Team · Consecuencias</div>
+  </div>
+
+  <!-- TABLA PRINCIPAL -->
+  <div class="table-wrapper">
+
+    <!-- =================== SECCIÓN 1 =================== -->
+    <div class="section-header">
+      <span class="section-icon" style="color:#ff6b6b">🔑</span>
+      <h2>Acceso Inicial y Autenticación</h2>
+      <span>TÁCTICA: TA0001 · TA0006</span>
+    </div>
+
+    <div class="pt-grid">
+      <!-- Headers -->
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- Fila 1: Fuerza bruta -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">FUERZA BRUTA</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>Ataque de Diccionario / Hydra</strong>
+        Lanzamiento masivo de combinaciones usuario-contraseña contra SSH, RDP o formularios web. Herramientas como Hydra automatizan miles de intentos por segundo, aprovechando contraseñas débiles o reutilizadas.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Fail2ban + Autenticación de Clave</strong>
+        Bloqueo automático de IPs tras N intentos fallidos (Fail2ban). Deshabilitar autenticación por contraseña en SSH; usar únicamente llaves ed25519-sk (hardware token). Limitar usuarios permitidos con <code>AllowUsers</code>. Configurar <code>MaxAuthTries 3</code>.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Sin hardening: Acceso total al sistema</strong>
+        Un ataque exitoso otorga shell remota con los privilegios del usuario comprometido. Con fail2ban activo y claves hardware: el ataque es bloqueado automáticamente y no puede completarse sin el token físico.
+      </div>
+
+      <!-- Fila 2: Credenciales por defecto -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">DEFAULT CREDS</span><br>
+        <span class="severity sev-critical">● CRITICAL</span>
+        <strong>Credenciales por Defecto</strong>
+        Explotación de contraseñas de fábrica en routers, paneles de administración web (admin/admin, root/toor) o servicios mal configurados expuestos en red interna o internet.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Política de Contraseñas + Inventario</strong>
+        Cambio obligatorio de credenciales en toda instalación. Escaneo periódico con Nmap para detectar servicios expuestos. Deshabilitar interfaces de gestión innecesarias. Segmentación de red con UFW/iptables.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Acceso a infraestructura crítica</strong>
+        Permite al atacante controlar dispositivos de red, redirigir tráfico o pivotar hacia otros segmentos. La segmentación con UFW limita el movimiento lateral incluso si un dispositivo es comprometido.
+      </div>
+    </div>
+
+    <!-- =================== SECCIÓN 2 =================== -->
+    <div class="section-header" style="margin-top:2.5rem">
+      <span class="section-icon" style="color:#f39c12">📡</span>
+      <h2>Reconocimiento y Escaneo de Red</h2>
+      <span>TÁCTICA: TA0043</span>
+    </div>
+
+    <div class="pt-grid">
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- Nmap -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">RECONOCIMIENTO</span><br>
+        <span class="severity sev-medium">● MEDIUM</span>
+        <strong>Escaneo con Nmap</strong>
+        Escaneo de puertos (<code>nmap -sV -O -A</code>) para identificar hosts activos, servicios en ejecución, versiones de software y predicción del sistema operativo. Permite mapear la superficie de ataque completa de la red.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Firewall + Puerto No Estándar</strong>
+        UFW configurado para denegar todo tráfico entrante por defecto, solo permitiendo puertos necesarios. SSH en puerto no estándar (46217) para dificultar escaneos automatizados. 997 puertos en estado "filtered" son invisibles para herramientas básicas.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>El reconocimiento es inevitable</strong>
+        Un atacante paciente encontrará los puertos con un escaneo completo (<code>-p-</code>). El firewall no impide el descubrimiento, pero sí reduce dramáticamente la superficie de ataque y aumenta el tiempo necesario para comprometer el sistema.
+      </div>
+
+      <!-- Script recon -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">AUTOMATIZACIÓN</span><br>
+        <span class="severity sev-medium">● MEDIUM</span>
+        <strong>Scripts de Reconocimiento Personalizados</strong>
+        Uso de scripts bash que automatizan ping sweep, detección de hostname, escaneo de versiones y exportación de resultados. Permite realizar reconocimiento sistemático de redes completas en minutos.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Rate Limiting + IDS/IPS</strong>
+        UFW con límites de conexión (<code>ufw limit</code>) para detectar escaneos agresivos. Fail2ban para bloquear IPs con comportamiento anómalo. Logging habilitado en todos los servicios para auditoría posterior.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Visibilidad vs. Velocidad</strong>
+        Los logs capturan el escaneo, pero el daño informativo ya está hecho. La defensa real está en no exponer información útil: puertos filtrados, banners sin versión, y servicios mínimos reducen la inteligencia obtenida.
+      </div>
+    </div>
+
+    <!-- =================== SECCIÓN 3 =================== -->
+    <div class="section-header" style="margin-top:2.5rem">
+      <span class="section-icon" style="color:#e74c3c">💥</span>
+      <h2>Denegación de Servicio (DoS)</h2>
+      <span>TÁCTICA: TA0040</span>
+    </div>
+
+    <div class="pt-grid">
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- SYN Flood -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">SYN FLOOD</span><br>
+        <span class="severity sev-critical">● CRITICAL</span>
+        <strong>hping3 SYN Flood</strong>
+        Inundación de paquetes TCP SYN a ~6 MB/s (≈50 Mbps) usando <code>hping3 -S --flood</code>. Desborda la tabla de conexiones semiabiertas (SYN Backlog) del servidor, agotando la memoria del kernel y haciendo el sistema irresponsivo.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>SYN Cookies + iptables raw</strong>
+        Activar SYN Cookies en el kernel (<code>net.ipv4.tcp_syncookies=1</code>) elimina la necesidad de almacenar conexiones incompletas. Reglas iptables en tabla raw descartan paquetes de flood antes del conntrack. Caddy con timeouts agresivos (<code>read_header 10s</code>, <code>idle 1m</code>).
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Sin mitigación: Caída total del servicio</strong>
+        La terminal del servidor tardó hasta 15 minutos en procesar un comando. La web quedó inaccesible. Con SYN Cookies + reglas iptables raw: se bloquearon +16 millones de paquetes maliciosos; Mint y otros clientes mantuvieron conectividad normal.
+      </div>
+
+      <!-- Slowloris -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">SLOWLORIS</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>Ataque Slowloris (CVE-2007-6750)</strong>
+        Mantiene múltiples conexiones HTTP abiertas enviando cabeceras incompletas lentamente, impidiendo que el servidor libere esas conexiones. Agota el pool de conexiones disponibles sin generar mucho tráfico, dificultando su detección.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Timeouts en Caddy + Límite de Body</strong>
+        Configuración de timeouts estrictos: <code>read_header 10s</code>, <code>read_body 30s</code>, <code>write 30s</code>, <code>idle 1m</code>. Límite de tamaño de petición a 1MB. Solo métodos GET y HEAD permitidos. El servidor cierra automáticamente conexiones lentas o inactivas.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Vectores lentos son igualmente peligrosos</strong>
+        Nmap clasificó el servidor como "LIKELY VULNERABLE" antes del hardening. Los timeouts de Caddy neutralizan el ataque sin requerir hardware adicional. La combinación de Caddy + UFW + kernel hardening crea defensa en profundidad.
+      </div>
+
+      <!-- UDP Flood -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">UDP FLOOD</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>Flooding de Puertos UDP</strong>
+        Envío masivo de paquetes UDP a puertos arbitrarios. El servidor debe procesar cada paquete para determinar si hay un servicio escuchando; si no, genera un mensaje ICMP de destino inalcanzable, consumiendo CPU y ancho de banda.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>UFW + Límites de Rate UDP</strong>
+        UFW solo permite UDP en puertos DNS (53) y DHCP (67/68). Reglas iptables limitan UDP flood a 300 paquetes/segundo con burst de 600. Filtrado de IPs origen raras con <code>rp_filter=2</code> para bloquear spoofing.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Degradación de servicios DNS/DHCP</strong>
+        Sin filtrado, el UDP flood interfiere con la resolución DNS interna y la asignación de IPs por DHCP. Con rate limiting aplicado en la tabla raw, el flood se descarta antes de afectar a los servicios legítimos de la red.
+      </div>
+    </div>
+
+    <!-- =================== SECCIÓN 4 =================== -->
+    <div class="section-header" style="margin-top:2.5rem">
+      <span class="section-icon" style="color:#5dade2">🌐</span>
+      <h2>Seguridad Web y Aplicaciones</h2>
+      <span>TÁCTICA: TA0001 · TA0009</span>
+    </div>
+
+    <div class="pt-grid">
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- HTTPS downgrade -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">DOWNGRADE</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>Ataque de Degradación HTTPS/SSL Strip</strong>
+        Intercepción de la comunicación entre cliente y servidor para forzar el uso de HTTP en lugar de HTTPS, permitiendo leer o modificar el tráfico en texto plano. Posible en redes internas mediante ARP spoofing.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>HSTS + Redirección Permanente</strong>
+        Caddy redirige todo HTTP a HTTPS con código 301. Cabecera HSTS con <code>max-age=31536000</code>: el navegador recuerda usar HTTPS durante un año. Certificado CA interno importado en clientes para validación sin errores.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>HSTS hace el downgrade inviable</strong>
+        Una vez el navegador registra la política HSTS, rechaza activamente conexiones HTTP sin intervención del usuario. El certificado ECC interno (Elliptic Curve) proporciona cifrado moderno que resiste ataques cuánticos a corto plazo.
+      </div>
+
+      <!-- Content sniffing -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">MIME SNIFFING</span><br>
+        <span class="severity sev-medium">● MEDIUM</span>
+        <strong>MIME Type Confusion Attack</strong>
+        El navegador intenta "adivinar" el tipo de archivo si el servidor no lo especifica correctamente. Un atacante puede subir un archivo malicioso disfrazado de imagen o documento, que el navegador ejecuta como script.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>X-Content-Type-Options: nosniff</strong>
+        Cabecera que fuerza al navegador a usar exactamente el Content-Type declarado por el servidor, sin intentar detectarlo. Implementado en Caddy para todas las respuestas. Combinado con restricción de métodos HTTP a GET/HEAD únicamente.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Prevención de ejecución no autorizada</strong>
+        Sin este header, un atacante podría alojar código JavaScript en un archivo con extensión .jpg. Con <code>nosniff</code>, el navegador se niega a ejecutar el contenido si no coincide con el tipo declarado, bloqueando el vector de ataque.
+      </div>
+
+      <!-- Information leakage -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">INFO LEAK</span><br>
+        <span class="severity sev-medium">● MEDIUM</span>
+        <strong>Exposición de Información del Servidor</strong>
+        Cabeceras HTTP por defecto revelan versión del servidor web, framework, sistema operativo y otras tecnologías. Nmap y herramientas similares extraen esta información para construir ataques dirigidos a vulnerabilidades conocidas.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Referrer-Policy + Header Sanitization</strong>
+        Caddy no expone información de versión en cabeceras. <code>Referrer-Policy: no-referrer</code> evita que el servidor de destino conozca el origen de la navegación. Puerto SSH no estándar dificulta fingerprinting automatizado.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Seguridad por oscuridad como capa adicional</strong>
+        Ocultar versiones no elimina vulnerabilidades, pero obliga al atacante a realizar reconocimiento más profundo. La combinación de información mínima + software actualizado reduce significativamente la superficie de ataque explotable.
+      </div>
+    </div>
+
+    <!-- =================== SECCIÓN 5 =================== -->
+    <div class="section-header" style="margin-top:2.5rem">
+      <span class="section-icon" style="color:#a29bfe">🔐</span>
+      <h2>Gestión de Acceso Remoto (SSH)</h2>
+      <span>TÁCTICA: TA0008 · TA0011</span>
+    </div>
+
+    <div class="pt-grid">
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- Key theft -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">ROBO DE CLAVE</span><br>
+        <span class="severity sev-critical">● CRITICAL</span>
+        <strong>Exfiltración de Clave Privada SSH</strong>
+        Robo del archivo de clave privada RSA/ED25519 del sistema de archivos del cliente mediante malware, acceso físico o compromiso del sistema. Con la clave privada, el atacante puede autenticarse sin contraseña.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>ed25519-sk con YubiKey (Hardware Token)</strong>
+        La clave privada es generada y almacenada exclusivamente dentro del hardware token (YubiKey 5). El sistema del usuario solo guarda un puntero, nunca la clave real. Autenticación requiere: token físico + PIN + toque físico (3 factores). La firma criptográfica ocurre dentro del hardware, aislada del PC.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Robo del puntero es inútil sin el hardware</strong>
+        Si el puntero es exfiltrado, el atacante no puede autenticarse sin la YubiKey física. Sin el PIN correcto, el token se bloquea. Sin el toque físico, la operación es rechazada. Imposible realizar fuerza bruta sin el dispositivo.
+      </div>
+
+      <!-- Quantum / harvest now -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">QUANTUM THREAT</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>Harvest Now, Decrypt Later</strong>
+        Captura y almacenamiento de tráfico SSH cifrado para descifrarlo en el futuro cuando haya computadoras cuánticas disponibles. RSA y ECDH clásicos son vulnerables a algoritmos cuánticos como Shor.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>Algoritmos Post-Cuánticos Híbridos</strong>
+        SSH configurado con <code>KexAlgorithms sntrup761x25519-sha512</code> (intercambio de claves post-cuántico híbrido). Rotación de sesión cada 1GB o 1 hora (<code>RekeyLimit 1G 1H</code>). Ciphers modernos: ChaCha20-Poly1305 y AES-256-GCM.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Ventana de exposición limitada a 1h/1GB</strong>
+        Aunque el tráfico sea capturado, el rekey frecuente limita la cantidad de datos que podría descifrarse si se rompe una clave de sesión. El algoritmo híbrido post-cuántico proporciona seguridad ante amenazas tanto actuales como futuras.
+      </div>
+
+      <!-- Privilege escalation -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">PRIV ESCALATION</span><br>
+        <span class="severity sev-critical">● CRITICAL</span>
+        <strong>Escalada de Privilegios vía Root SSH</strong>
+        Si el acceso SSH root está habilitado, comprometer cualquier credencial otorga control total del sistema. Los ataques de fuerza bruta contra root son el vector más común en servidores expuestos a internet.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>PermitRootLogin no + AllowUsers alik</strong>
+        Root SSH completamente deshabilitado. Solo el usuario <code>alik</code> puede conectarse. Autenticación exclusivamente por clave pública (<code>AuthenticationMethods publickey</code>). Contraseñas vacías prohibidas. Máximo 3 intentos de autenticación.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Sin root SSH, el vector de ataque más crítico desaparece</strong>
+        Un atacante que logre conectarse solo obtiene acceso como <code>alik</code> con sudo, sin contraseña root directa. El principio de mínimo privilegio contiene el daño incluso ante un compromiso parcial del sistema.
+      </div>
+    </div>
+
+    <!-- =================== SECCIÓN 6 =================== -->
+    <div class="section-header" style="margin-top:2.5rem">
+      <span class="section-icon" style="color:#74b9ff">🌍</span>
+      <h2>DNS y Comunicaciones de Red</h2>
+      <span>TÁCTICA: TA0011 · TA0042</span>
+    </div>
+
+    <div class="pt-grid">
+      <div class="col-header attack"><span class="col-icon">⚔</span> ATAQUE</div>
+      <div class="col-header defense"><span class="col-icon">🛡</span> DEFENSA</div>
+      <div class="col-header conseq"><span class="col-icon">⚡</span> CONSECUENCIAS</div>
+
+      <!-- DNS cache poisoning -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">DNS POISONING</span><br>
+        <span class="severity sev-critical">● CRITICAL</span>
+        <strong>Envenenamiento de Caché DNS</strong>
+        Inyección de respuestas DNS falsas en el caché del servidor resolvedor. Redirige a los usuarios a sitios maliciosos que suplantan dominios legítimos (phishing, distribución de malware) sin modificar el dominio real.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>DNSSEC + TSIG para DDNS</strong>
+        DNSSEC validado automáticamente en Bind9 (<code>dnssec-validation auto</code>): verifica que las respuestas DNS estén firmadas criptográficamente por el propietario de la zona. Actualizaciones dinámicas protegidas con llave HMAC-SHA256 TSIG, autorizando solo al servidor DHCP.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>DNSSEC bloquea respuestas no autorizadas</strong>
+        Las respuestas no firmadas o con firma inválida son rechazadas por Bind9. La llave TSIG garantiza que solo Kea DHCP puede modificar registros dinámicos. Un atacante interno que intente modificar el DNS sin la llave es automáticamente bloqueado.
+      </div>
+
+      <!-- ARP Spoofing -->
+      <div class="pt-cell attack">
+        <span class="tag tag-red">ARP SPOOFING</span><br>
+        <span class="severity sev-high">● HIGH</span>
+        <strong>ARP Spoofing / Man-in-the-Middle</strong>
+        Envío de respuestas ARP falsas para asociar la dirección MAC del atacante con la IP del gateway o de otro host. Permite interceptar, modificar o bloquear el tráfico entre víctimas en la misma red local.
+      </div>
+      <div class="pt-cell defense">
+        <span class="tag tag-blue">MITIGACIÓN</span>
+        <strong>HTTPS Forzado + Certificados TLS</strong>
+        Aunque el ARP spoofing permite interceptar el tráfico, HSTS + TLS con certificado propio impiden leer su contenido. El atacante solo ve datos cifrados. La segmentación de red limita el alcance del ataque al segmento afectado.
+      </div>
+      <div class="pt-cell conseq">
+        <span class="tag tag-purp">IMPACTO</span>
+        <strong>Cifrado end-to-end mitiga el impacto</strong>
+        Un MITM en la red interna no puede descifrar el tráfico HTTPS sin la clave privada del servidor. La política <code>no-referrer</code> impide revelar rutas de navegación. El atacante puede ver metadatos (IPs, tiempos) pero no el contenido real.
+      </div>
+    </div>
+
+  </div><!-- /table-wrapper -->
+
+  <footer>
+    CIBERWIKI · PURPLE TEAM FRAMEWORK · PROYECTO INTERMODULAR · 2026 &nbsp;|&nbsp;
+    Daniel Páramo Rey · Albert Butsalan Chistyakov · Qi Zhou
+  </footer>
+
  
 </body>
 </html>
