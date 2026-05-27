@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css"> 
+    <title>Purple Team</title>
+</head>
+<body>
+ 
+<div class="scanline"></div>
+ 
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">Ciber<span>wiki</span></a>
+  <nav>
+            <a href="indice2.html" class="logo">Ciberwiki</a>
+            <hr>
+            <ul class="navegador">
+                <li class="nav"><a href="../index.html">Inicio</a></li>
+                <li class="nav"><a href="../indice_purpleteam/index.html">Purple Team</a></li>
+                <li class="nav"><a href="../indice_redteam/index.html">Red Team</a></li>
+                <li class="nav"><a href="../indice_blueteam/indice2.html">Blue Team</a></li>
+                <li class="nav"><a href="../información/index.html">Contacto</a></li>
+            </ul>
+        </nav>
+</header>
+ 
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">Purple Team · Módulo de colaboración</div>
+  <h1>
+    La fusión de<br>
+    <span class="red">Ataque</span> &amp; <span class="blue">Defensa</span><br>
+    <span class="purp">Purple Teaming</span>
+  </h1>
+  <p class="hero-desc">
+    El Purple Team integra las tácticas ofensivas del Red Team con las capacidades defensivas del Blue Team para crear un ciclo de retroalimentación continuo. La mejor defensa nace de entender el ataque.
+  </p>
+  <div class="fusion-bar">
+    <div class="seg r">⚔ Red Team</div>
+    <div class="seg plus">✦</div>
+    <div class="seg b">🛡 Blue Team</div>
+  </div>
+</div>
+ 
+<!-- SECTION HEAD -->
+<div class="section-head">
+  <h2>// Matriz de análisis Purple Team</h2>
+</div>
+ 
+<!-- TABLE -->
+<div class="table-wrap">
+ 
+  <!-- Column headers -->
+  <div class="col-headers">
+    <div class="col-h attack"><span class="icon">⚔</span> Ataque</div>
+    <div class="col-h defense"><span class="icon">🛡</span> Defensa</div>
+    <div class="col-h consq"><span class="icon">⚠</span> Consecuencias</div>
+  </div>
+ 
+  <div class="attack-block">
+ 
+    <!-- ROW 1: SYN Flood / DoS -->
+    <div class="attack-row row-1">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> SYN Flood (DoS)</div>
+        <div class="attack-sub">CVE-2007-6750 · hping3 --flood</div>
+        <p>El atacante envía miles de paquetes TCP SYN por segundo sin completar el handshake, saturando la tabla de conexiones semiabiertas (SYN Backlog) del servidor y agotando sus recursos de red y CPU.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li>Activar <strong>SYN Cookies</strong> en el kernel (<code>net.ipv4.tcp_syncookies=1</code>) para evitar reserva de memoria por conexión incompleta.</li>
+          <li>Configurar <strong>UFW rate-limiting</strong> por IP para limitar conexiones simultáneas.</li>
+          <li>Ajustar <strong>timeouts TCP</strong> reduciendo <code>tcp_synack_retries</code> a 3.</li>
+          <li>Implementar <strong>fail2ban</strong> con jail para detectar ráfagas anómalas.</li>
+          <li>Filtrado de IPs con origen no válido mediante <strong>rp_filter=2</strong>.</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>El servidor queda sin recursos para atender peticiones legítimas. La terminal del administrador deja de responder, pudiendo requerir hasta 15 minutos por comando. La página web resulta inaccesible para todos los usuarios.</p>
+        <div class="tags">
+          <span class="tag high">Impacto alto</span>
+          <span class="tag high">Disponibilidad crítica</span>
+          <span class="tag med">Recuperación media</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ROW 2: Slowloris -->
+    <div class="attack-row row-2">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> Slowloris</div>
+        <div class="attack-sub">CVE-2007-6750 · HTTP parcial lento</div>
+        <p>El atacante abre múltiples conexiones HTTP al servidor y envía cabeceras de forma extremadamente lenta, manteniendo las conexiones abiertas indefinidamente y agotando el pool de conexiones disponibles del servidor web.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li>Configurar <strong>timeouts estrictos</strong> en Caddy: <code>read_header 10s</code>, <code>read_body 30s</code>, <code>write 30s</code>, <code>idle 1m</code>.</li>
+          <li>Limitar el <strong>tamaño máximo del cuerpo</strong> de petición a 1MB (<code>max_size 1MB</code>).</li>
+          <li>Bloquear <strong>métodos HTTP innecesarios</strong>; permitir solo GET y HEAD.</li>
+          <li>Usar <strong>UFW rate limit</strong> por conexiones entrantes al puerto 80/443.</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>El servidor web queda incapaz de atender nuevas conexiones. Los usuarios legítimos reciben errores de timeout. El servicio permanece degradado sin consumir prácticamente CPU, lo que dificulta la detección.</p>
+        <div class="tags">
+          <span class="tag high">Disponibilidad</span>
+          <span class="tag med">Detección difícil</span>
+          <span class="tag low">Bajo consumo CPU</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ROW 3: Fuerza Bruta SSH -->
+    <div class="attack-row row-3">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> Fuerza Bruta SSH</div>
+        <div class="attack-sub">Hydra · Ataque por diccionario</div>
+        <p>Herramientas como Hydra prueban de forma automática miles de combinaciones de usuario/contraseña contra el puerto SSH. Los bots escanean rangos de IPs buscando el puerto 22 abierto con autenticación por contraseña habilitada.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li>Deshabilitar completamente la <strong>autenticación por contraseña</strong> (<code>PasswordAuthentication no</code>).</li>
+          <li>Usar <strong>llaves de hardware</strong> (YubiKey ed25519-sk) con PIN + toque físico (4 factores).</li>
+          <li>Cambiar SSH a un <strong>puerto no estándar</strong> (ej. 46217) para evitar escaneos automatizados.</li>
+          <li>Limitar acceso a <strong>usuarios específicos</strong> (<code>AllowUsers alik</code>).</li>
+          <li><strong>Fail2ban</strong> bloquea IPs tras 3 intentos fallidos con espera de 30s.</li>
+          <li>Máximo <strong>3 intentos de autenticación</strong> por conexión (<code>MaxAuthTries 3</code>).</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>Sin defensa, el atacante puede ganar acceso root al servidor con los privilegios completos del sistema. Con las defensas implementadas (sin contraseñas + hardware key), el ataque resulta completamente inviable.</p>
+        <div class="tags">
+          <span class="tag high">Acceso root</span>
+          <span class="tag high">Compromiso total</span>
+          <span class="tag purple">Mitigado completamente</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ROW 4: Escaneo de puertos / Reconocimiento -->
+    <div class="attack-row row-4">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> Reconocimiento con Nmap</div>
+        <div class="attack-sub">OSINT · nmap -sV -A -O</div>
+        <p>El atacante utiliza Nmap para mapear la infraestructura de red: descubre máquinas activas, puertos abiertos, versiones de servicios y sistema operativo. Esta fase de reconocimiento precede a cualquier ataque real.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li><strong>UFW</strong> bloquea todo el tráfico entrante por defecto, filtrando 997 de 1000 puertos TCP.</li>
+          <li>Solo <strong>puertos necesarios</strong> están abiertos: SSH (no estándar), 80, 443, 53, 67/68.</li>
+          <li><strong>Puerto SSH no estándar</strong> (46217) dificulta la identificación automática del servicio.</li>
+          <li>El servidor NAT actúa como <strong>primera capa de aislamiento</strong>; los puertos del servidor son inaccesibles desde fuera de la red interna.</li>
+          <li>Nmap clasifica el SSH como "unknown" en el escaneo inicial por el puerto no estándar.</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>El escaneo revela la superficie de ataque disponible. Gracias al hardening, solo 3 puertos son visibles desde la red interna y el SSH no se identifica inmediatamente. La exposición exterior es prácticamente nula.</p>
+        <div class="tags">
+          <span class="tag low">Superficie mínima</span>
+          <span class="tag med">Info parcial al atacante</span>
+          <span class="tag purple">Bien mitigado</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ROW 5: DNS Cache Poisoning -->
+    <div class="attack-row row-5">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> DNS Cache Poisoning</div>
+        <div class="attack-sub">Ataque de envenenamiento DNS</div>
+        <p>El atacante inyecta registros DNS falsos en la caché del servidor DNS para redirigir el tráfico hacia IPs maliciosas. Los usuarios creen acceder al sitio legítimo mientras son dirigidos a un servidor controlado por el atacante.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li>Activar <strong>DNSSEC</strong> en BIND9 (<code>dnssec-validation auto</code>) para verificar firmas criptográficas de zonas DNS.</li>
+          <li>Usar <strong>TSIG (Transaction SIGnature)</strong> HMAC-SHA256 entre BIND9 y Kea DDNS para autenticar actualizaciones.</li>
+          <li>Restringir <strong>actualizaciones de zona</strong> únicamente a la clave TSIG autorizada (<code>allow-update { key "kea-ddns."; }</code>).</li>
+          <li>Limitar <strong>consultas recursivas</strong> solo a la red interna (<code>allow-recursion { localhost; 10.69.67.0/24; }</code>).</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>Sin protección, los usuarios son redirigidos silenciosamente a sitios falsos que capturan credenciales o instalan malware. Con DNSSEC + TSIG, cualquier respuesta no firmada o no autorizada es rechazada automáticamente.</p>
+        <div class="tags">
+          <span class="tag high">Phishing masivo</span>
+          <span class="tag high">Robo credenciales</span>
+          <span class="tag purple">Mitigado con DNSSEC</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ROW 6: Escalada de privilegios -->
+    <div class="attack-row row-6">
+      <div class="cell attack-cell">
+        <div class="cell-label">⚔ Ataque</div>
+        <div class="attack-name"><span class="dot"></span> Escalada de Privilegios</div>
+        <div class="attack-sub">Privilege Escalation · Post-explotación</div>
+        <p>Una vez obtenido acceso con usuario limitado, el atacante intenta escalar privilegios hacia root mediante exploits de kernel, SUID mal configurados, sudo misconfiguration o servicios con privilegios excesivos.</p>
+      </div>
+      <div class="cell defense-cell">
+        <div class="cell-label">🛡 Defensa</div>
+        <ul class="def-list">
+          <li><strong>Root bloqueado</strong> para login directo (<code>PermitRootLogin no</code>); solo acceso vía sudo.</li>
+          <li>Usuario administrador <strong>"alik"</strong> con sudo limitado; no se trabaja habitualmente como root.</li>
+          <li><strong>AppArmor</strong> activo restringe qué procesos pueden acceder a qué archivos (observado en incidencias con Kea).</li>
+          <li>Docker ejecuta Caddy en un <strong>contenedor aislado</strong>, limitando el daño si Caddy es comprometido.</li>
+          <li><strong>Fail2ban + UFW</strong> dificultan que el atacante mantenga una sesión activa.</li>
+          <li>Permisos de archivos estrictos (<strong>chmod 600/700</strong>) en archivos críticos de configuración.</li>
+        </ul>
+      </div>
+      <div class="cell consq-cell">
+        <div class="cell-label">⚠ Consecuencias</div>
+        <p>Sin control de privilegios, un atacante con acceso a un usuario normal puede obtener control total del sistema en minutos. El modelo de mínimo privilegio + AppArmor + contenedores limita el radio de explosión de cualquier compromiso.</p>
+        <div class="tags">
+          <span class="tag high">Control total sistema</span>
+          <span class="tag med">Movimiento lateral</span>
+          <span class="tag purple">Contenido por AppArmor</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div><!-- /.attack-block -->
+</div><!-- /.table-wrap -->
+ 
+
+<!-- FOOTER -->
+<footer>
+  <span>CiberWiki</span> · Purple Team · Proyecto Intermodular &nbsp;|&nbsp; Daniel Páramo · Albert Butsalan · Qi Zhou
+</footer>
+ 
+</body>
+</html>
