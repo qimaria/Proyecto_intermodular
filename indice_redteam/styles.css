@@ -109,39 +109,6 @@ nav{
   margin-bottom: 1rem;
   color: rgb(236, 34, 20);
 }
-/* .saber {
-  background-color: rgba(240, 71, 41, 0.993);
-  color: rgb(222, 238, 251);
-  border: none;
-  padding: 1rem 2.5rem;
-  border-radius: 50px;
-  cursor: pointer;
-  margin-top: 2rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  transition: all 0.4s ease;
-  box-shadow: 0 0 15px rgb(213, 43, 43);
-  position: relative;
-  overflow: hidden;
-}
-.saber::before {
-  content: "";
-  position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s ease;
-}
-.saber:hover::before {
-    left: 100%;
-}
-.saber:hover {
-  background-color:  rgb(179, 37, 37);
-  transform: translateY(-3px) scale(1.05);
-} */
-
 a:hover {
   color: rgb(249, 44, 44);
 }
@@ -189,8 +156,6 @@ a:hover {
   padding:2rem;
   transition: transform 0.4s ease;
   animation: reveal linear both;
-  animation-timeline: view();
-  animation-range: entry 0% cover 30%;
 }
 .herramienta-card:hover img {
     transform: translateY(-5px) scale(1.05);
@@ -252,6 +217,13 @@ footer {
   }
   .herramienta-card {
     min-height: 600px;
+  }
+   header a{
+    font-size: medium;
+  }
+  .logo {
+    font-size: 1.5rem;
+    padding: 1rem;
   }
 }
 
